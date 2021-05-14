@@ -6,7 +6,6 @@ const Login = ({ location, history }) => {
   const [token, setToken] = useState(sessionStorage.getItem('token'))
 
   useEffect(() => {
-    console.log(token)
     const code =
       location.search.match(/\?code=(.*)/) &&
       location.search.match(/\?code=(.*)/)[1]

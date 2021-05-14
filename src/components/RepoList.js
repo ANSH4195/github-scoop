@@ -2,10 +2,12 @@ import React from 'react'
 import Moment from 'react-moment'
 import { useQuery } from 'react-apollo'
 import { REPOS_QUERY } from '../config/queries'
+import { Waypoint } from 'react-waypoint'
 
 const RepoList = () => {
   const { data, loading, error, fetchMore } = useQuery(REPOS_QUERY, {
-    variables: { after: null }
+    variables: { after: null },
+    notifyOnNetworkStatusChange: true
   })
 
   const moreRepos = () => {
@@ -30,7 +32,7 @@ const RepoList = () => {
       </p>
     )
   }
-  return loading ? (
+  return !data ? (
     <div
       className='spinner-grow text-white'
       role='status'
@@ -48,7 +50,7 @@ const RepoList = () => {
     <div>
       <h2 className='text-center'>Your Repositories</h2>
       <hr />
-      {data.viewer.repositories.nodes.map((repo) => {
+      {data.viewer.repositories.nodes.map((repo, index) => {
         return (
           <div key={repo.id}>
             <div className='row align-items-center'>
@@ -75,14 +77,26 @@ const RepoList = () => {
               </div>
             </div>
             <hr />
+            {index === data.viewer.repositories.nodes.length - 2 &&
+              data.viewer.repositories.pageInfo.hasNextPage && (
+                <Waypoint onEnter={moreRepos} />
+              )}
           </div>
         )
       })}
-      {data.viewer.repositories.pageInfo.hasNextPage && (
-        <div className='text-center'>
-          <button className='btn btn-outline-info btn-lg' onClick={moreRepos}>
-            Load More
-          </button>
+      {loading && (
+        <div
+          className='spinner-border text-white'
+          role='status'
+          style={{
+            width: '40px',
+            height: '40px',
+            margin: 'auto',
+            display: 'block',
+            marginTop: '0.5rem'
+          }}
+        >
+          <span className='visually-hidden'>Loading...</span>
         </div>
       )}
     </div>
