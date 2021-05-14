@@ -15,26 +15,41 @@ export const REPOS_QUERY = gql`
     viewer {
       repositories(
         first: 5
+        ownerAffiliations: [OWNER]
         after: $after
         orderBy: { field: CREATED_AT, direction: DESC }
       ) {
         nodes {
-          id
           name
           description
           createdAt
           url
-          languages(first: 3) {
-            nodes {
-              color
-              name
-            }
-          }
         }
         pageInfo {
           endCursor
           hasNextPage
         }
+      }
+    }
+  }
+`
+
+export const REPO_DETAILS_QUERY = gql`
+  query repoDetails($name: String!) {
+    viewer {
+      repository(name: $name) {
+        id
+        name
+        description
+        collaborators(first: 5) {
+          nodes {
+            name
+            url
+            avatarUrl
+          }
+        }
+        url
+        createdAt
       }
     }
   }

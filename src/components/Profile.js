@@ -31,12 +31,12 @@ const Profile = () => {
             <span className='visually-hidden'>Loading...</span>
           </div>
         ) : (
-          <div className='col-md-4'>
+          <div className='col-lg-4'>
             <div className='text-center'>
               <img
                 src={data.viewer.avatarUrl}
                 alt={data.viewer.name}
-                className='img-fluid rounded-circle w-75'
+                className='img-fluid rounded-circle w-50'
               />
             </div>
             <br />
@@ -54,7 +54,7 @@ const Profile = () => {
             <hr />
           </div>
         )}
-        <div className='col-md-8'>
+        <div className='col-lg-8'>
           <RepoList />
         </div>
       </div>

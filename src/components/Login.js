@@ -41,7 +41,7 @@ const Login = ({ location, history }) => {
       ) : !token ? (
         <>
           <a
-            href={`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_CID}&scope=user&redirect_uri=${process.env.REACT_APP_REDIRECT}`}
+            href={`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_CID}&scope=user%20repo&redirect_uri=${process.env.REACT_APP_REDIRECT}`}
             className='btn btn-primary btn-lg'
           >
             <i className='bi bi-github'></i> Login with GitHub

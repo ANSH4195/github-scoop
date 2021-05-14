@@ -3,6 +3,7 @@ import Moment from 'react-moment'
 import { useQuery } from 'react-apollo'
 import { REPOS_QUERY } from '../config/queries'
 import { Waypoint } from 'react-waypoint'
+import { Link } from 'react-router-dom'
 
 const RepoList = () => {
   const { data, loading, error, fetchMore } = useQuery(REPOS_QUERY, {
@@ -52,7 +53,7 @@ const RepoList = () => {
       <hr />
       {data.viewer.repositories.nodes.map((repo, index) => {
         return (
-          <div key={repo.id}>
+          <div key={repo.name}>
             <div className='row align-items-center'>
               <div className='col-md-10'>
                 <h3 className='text-info'>{repo.name}</h3>
@@ -72,7 +73,12 @@ const RepoList = () => {
                   >
                     <i className='bi bi-github'></i>
                   </a>
-                  <button className='btn btn-success'>Details</button>
+                  <Link
+                    to={`/details/${repo.name}`}
+                    className='btn btn-success'
+                  >
+                    Details
+                  </Link>
                 </div>
               </div>
             </div>
