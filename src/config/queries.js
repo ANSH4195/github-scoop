@@ -6,6 +6,19 @@ export const PROFILE_QUERY = gql`
       name
       url
       avatarUrl
+      bio
+      followers {
+        totalCount
+      }
+      following {
+        totalCount
+      }
+      gists {
+        totalCount
+      }
+      repositories {
+        totalCount
+      }
     }
   }
 `
@@ -21,7 +34,6 @@ export const REPOS_QUERY = gql`
       ) {
         nodes {
           name
-          description
           createdAt
           url
         }
@@ -50,6 +62,26 @@ export const REPO_DETAILS_QUERY = gql`
         }
         url
         createdAt
+      }
+    }
+  }
+`
+
+export const EDIT_REPO_MUTATION = gql`
+  mutation updateRepo(
+    $repositoryId: String!
+    $name: String
+    $description: String
+  ) {
+    updateRepository(
+      input: {
+        repositoryId: $repositoryId
+        name: $name
+        description: $description
+      }
+    ) {
+      repository {
+        name
       }
     }
   }

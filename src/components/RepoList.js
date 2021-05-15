@@ -1,15 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Moment from 'react-moment'
 import { useQuery } from 'react-apollo'
 import { REPOS_QUERY } from '../config/queries'
 import { Waypoint } from 'react-waypoint'
 import { Link } from 'react-router-dom'
+import Loader from './helpers/Loader'
+import Alert from './helpers/Alert'
 
 const RepoList = () => {
-  const { data, loading, error, fetchMore } = useQuery(REPOS_QUERY, {
-    variables: { after: null },
+  const { data, loading, error, fetchMore, refetch } = useQuery(REPOS_QUERY, {
     notifyOnNetworkStatusChange: true
   })
+
+  useEffect(() => {
+    refetch()
+    // eslint-disable-next-line
+  }, [])
 
   const moreRepos = () => {
     const { endCursor } = data.viewer.repositories.pageInfo
@@ -27,26 +33,10 @@ const RepoList = () => {
   }
 
   if (error) {
-    return (
-      <p className='bg-danger text-white font-weight-bold text-center py-1'>
-        {error.message}
-      </p>
-    )
+    return <Alert error={error} />
   }
   return !data ? (
-    <div
-      className='spinner-grow text-white'
-      role='status'
-      style={{
-        width: '100px',
-        height: '100px',
-        margin: 'auto',
-        display: 'block',
-        marginTop: '3rem'
-      }}
-    >
-      <span className='visually-hidden'>Loading...</span>
-    </div>
+    <Loader />
   ) : (
     <div>
       <h2 className='text-center'>Your Repositories</h2>
@@ -57,9 +47,6 @@ const RepoList = () => {
             <div className='row align-items-center'>
               <div className='col-md-10'>
                 <h3 className='text-info'>{repo.name}</h3>
-                <p className='lead'>
-                  <em>{repo.description || 'No Description'}</em>
-                </p>
                 Created At:{' '}
                 <Moment format='DD/MM/YYYY'>{repo.createdAt}</Moment>
               </div>
@@ -90,21 +77,7 @@ const RepoList = () => {
           </div>
         )
       })}
-      {loading && (
-        <div
-          className='spinner-border text-white'
-          role='status'
-          style={{
-            width: '40px',
-            height: '40px',
-            margin: 'auto',
-            display: 'block',
-            marginTop: '0.5rem'
-          }}
-        >
-          <span className='visually-hidden'>Loading...</span>
-        </div>
-      )}
+      {loading && <Loader type='sm' />}
     </div>
   )
 }

@@ -6,6 +6,9 @@ const Login = ({ location, history }) => {
   const [token, setToken] = useState(sessionStorage.getItem('token'))
 
   useEffect(() => {
+    if (token) {
+      history.replace('/homepage')
+    }
     const code =
       location.search.match(/\?code=(.*)/) &&
       location.search.match(/\?code=(.*)/)[1]
@@ -18,7 +21,7 @@ const Login = ({ location, history }) => {
         setToken(data.token)
         sessionStorage.setItem('token', data.token)
         setLoading(false)
-        history.push('/homepage')
+        history.replace('/homepage')
       }
       getToken()
     }

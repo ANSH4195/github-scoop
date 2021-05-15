@@ -2,3 +2,7 @@ body {
   background: black !important;
   color: white;
 }
+
+.bg-black {
+  background: #111111 !important;
+}

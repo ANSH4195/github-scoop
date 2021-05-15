@@ -3,8 +3,10 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Login from './components/Login'
 import Details from './components/Details'
 import Homepage from './components/Homepage'
+import PrivateRoute from './components/helpers/PrivateRoute'
 import { ApolloProvider } from 'react-apollo'
 import client from './config/apolloClient'
+import NotFound from './components/NotFound'
 
 function App() {
   return (
@@ -12,8 +14,9 @@ function App() {
       <Router>
         <Switch>
           <Route exact path='/' component={Login} />
-          <Route path='/details/:name' component={Details} />
-          <Route path='/homepage' component={Homepage} />
+          <PrivateRoute path='/homepage' component={Homepage} />
+          <PrivateRoute path='/details/:name' component={Details} />
+          <Route component={NotFound} />
         </Switch>
       </Router>
     </ApolloProvider>
