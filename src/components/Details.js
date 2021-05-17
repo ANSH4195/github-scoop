@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Moment from 'react-moment'
 import { Route } from 'react-router-dom'
 import Navbar from './Navbar'
 import Loader from './helpers/Loader'
 import Alert from './helpers/Alert'
-import { QueryRenderer } from 'react-relay'
+import { commitMutation, QueryRenderer } from 'react-relay'
 import graphql from 'babel-plugin-relay/macro'
 import RelayEnvironment from '../config/RelayEnvironment'
 
@@ -29,16 +29,72 @@ const DetailsQuery = graphql`
   }
 `
 
+const DetailsMutation = graphql`
+  mutation DetailsMutation(
+    $repositoryId: ID!
+    $name: String
+    $description: String
+  ) {
+    updateRepository(
+      input: {
+        repositoryId: $repositoryId
+        name: $name
+        description: $description
+      }
+    ) {
+      repository {
+        name
+        description
+      }
+    }
+  }
+`
+
+const doMutation = (
+  repositoryId,
+  name,
+  description,
+  history,
+  callback,
+  errorCallback
+) => {
+  let variables = {
+    repositoryId
+  }
+  if (name) {
+    variables.name = name
+  }
+  if (description) {
+    variables.description = description
+  }
+
+  commitMutation(RelayEnvironment, {
+    mutation: DetailsMutation,
+    variables,
+    onCompleted: (response) => {
+      history.replace(`/details/${response.updateRepository.repository.name}`)
+      callback()
+    },
+    onError: (err) => errorCallback(err)
+  })
+}
+
 const Details = ({ match, history }) => {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [errorOcc, setErrorOcc] = useState('')
 
-  // useEffect(() => {
-  //   if (data && props.viewer.repository.name !== match.params.name) {
-  //     history.replace(`/details/${props.viewer.repository.name}`)
-  //   }
-  //   // eslint-disable-next-line
-  // }, [data])
+  const resetState = () => {
+    setName('')
+    setDescription('')
+  }
+
+  const onError = (err) => {
+    setErrorOcc(err)
+    setTimeout(() => {
+      setErrorOcc('')
+    }, 20000)
+  }
 
   return (
     <>
@@ -51,7 +107,7 @@ const Details = ({ match, history }) => {
         }}
         render={({ error, props }) => {
           if (error) {
-            return <div>{error.message}</div>
+            return <Alert error={error.message} />
           } else if (props) {
             return (
               <div className='container my-3'>
@@ -121,8 +177,25 @@ const Details = ({ match, history }) => {
                             className='form-control bg-black text-white'
                             placeholder='new-name'
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
+                            onChange={(e) => {
+                              const _name = e.target.value
+                              const check = _name.charCodeAt(_name.length - 1)
+                              if (
+                                _name.length === 0 ||
+                                (check > 64 && check < 91) ||
+                                (check > 96 && check < 123) ||
+                                (check > 47 && check < 58) ||
+                                check === 45 ||
+                                check === 46 ||
+                                check === 95
+                              ) {
+                                setName(e.target.value)
+                              } else {
+                                alert(
+                                  'Allowed Characters are A-Z, a-z, 0-9, -, _ and .'
+                                )
+                              }
+                            }}
                           />
                           <label htmlFor='floatingInput'>New Name</label>
                         </div>
@@ -145,23 +218,20 @@ const Details = ({ match, history }) => {
                         <button
                           type='submit'
                           className='btn btn-primary'
-                          // onClick={(e) => {
-                          //   e.preventDefault()
-                          //   let variables = {
-                          //     repositoryId: props.viewer.repository.id
-                          //   }
-                          //   if (name) {
-                          //     variables.name = name
-                          //   }
-                          //   if (description) {
-                          //     variables.description = description
-                          //   }
-                          //   updateRepo({ variables })
-                          // }}
-                          // disabled={updateLoading || (!name && !description)}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            doMutation(
+                              props.viewer.repository.id,
+                              name,
+                              description,
+                              history,
+                              () => resetState(),
+                              (err) => onError(err)
+                            )
+                          }}
+                          disabled={(!name && !description) || errorOcc}
                         >
-                          {/* {updateLoading ? <Loader type='sm' /> : 'Submit'} */}
-                          Submit
+                          {errorOcc ? errorOcc : 'Submit'}
                         </button>
                       </div>
                     </form>

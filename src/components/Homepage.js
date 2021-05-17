@@ -6,6 +6,7 @@ import Loader from './helpers/Loader'
 import { QueryRenderer } from 'react-relay'
 import graphql from 'babel-plugin-relay/macro'
 import RelayEnvironment from '../config/RelayEnvironment'
+import Alert from './helpers/Alert'
 
 const HomepageQuery = graphql`
   query HomepageQuery($count: Int!, $after: String) {
@@ -27,7 +28,7 @@ const Homepage = () => {
         }}
         render={({ error, props }) => {
           if (error) {
-            return <div>{error.message}</div>
+            return <Alert error={error.message} />
           } else if (props) {
             return <Profile viewer={props.viewer} />
           }

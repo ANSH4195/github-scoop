@@ -15,8 +15,9 @@ const Login = ({ location, history }) => {
     if (code && !token) {
       async function getToken() {
         setLoading(true)
+
         const { data } = await axios.get(
-          `http://localhost:9999/authenticate/${code}`
+          `https://gtoken.herokuapp.com/authenticate/${code}`
         )
         setToken(data.token)
         sessionStorage.setItem('token', data.token)
