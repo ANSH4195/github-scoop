@@ -1,8 +1,16 @@
 body {
-  background: black !important;
+  background: #111111 !important;
   color: white;
 }
 
 .bg-black {
-  background: #111111 !important;
+  background: #222222 !important;
+}
+
+.grow {
+  transition: all 0.3s ease;
+}
+
+.grow:hover {
+  font-size: 30px;
 }
