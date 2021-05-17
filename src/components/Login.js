@@ -1,33 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useEffect } from 'react'
 
-const Login = ({ location, history }) => {
-  const [loading, setLoading] = useState(false)
-  const [token, setToken] = useState(sessionStorage.getItem('token'))
-
+const Login = ({ history }) => {
   useEffect(() => {
-    if (token) {
+    if (sessionStorage.getItem('token')) {
       history.replace('/homepage')
     }
-    const code =
-      location.search.match(/\?code=(.*)/) &&
-      location.search.match(/\?code=(.*)/)[1]
-    if (code && !token) {
-      async function getToken() {
-        setLoading(true)
-
-        const { data } = await axios.get(
-          `https://gtoken.herokuapp.com/authenticate/${code}`
-        )
-        setToken(data.token)
-        sessionStorage.setItem('token', data.token)
-        setLoading(false)
-        history.replace('/homepage')
-      }
-      getToken()
-    }
     // eslint-disable-next-line
-  }, [location.search])
+  }, [])
 
   return (
     <div className='mt-5 pt-5 text-center'>
@@ -36,24 +15,12 @@ const Login = ({ location, history }) => {
       </h1>
       <br />
       <br />
-      {loading ? (
-        <button className='btn btn-primary btn-lg disabled'>
-          <div className='spinner-border text-white' role='status'>
-            <span className='visually-hidden'>Loading...</span>
-          </div>
-        </button>
-      ) : !token ? (
-        <>
-          <a
-            href={`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_CID}&scope=user%20repo&redirect_uri=${process.env.REACT_APP_REDIRECT}`}
-            className='btn btn-primary btn-lg'
-          >
-            <i className='bi bi-github'></i> Login with GitHub
-          </a>
-        </>
-      ) : (
-        <button className='btn btn-primary btn-lg disabled'>Logged in</button>
-      )}
+      <a
+        href={`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_CID}&scope=user%20repo&redirect_uri=${process.env.REACT_APP_REDIRECT}`}
+        className='btn btn-primary btn-lg'
+      >
+        <i className='bi bi-github'></i> Login with GitHub
+      </a>
     </div>
   )
 }
