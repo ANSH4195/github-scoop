@@ -33,7 +33,14 @@ const Verify = ({ location, history }) => {
   return (
     <>
       {loading ? (
-        <Loader />
+        <>
+          <Loader />
+          <h4 className='text-center'>
+            <em>
+              Loading may take upto 30 seconds. (Heroku takes some time to load)
+            </em>
+          </h4>
+        </>
       ) : (
         <button className='btn btn-primary btn-lg disabled'>Logged in</button>
       )}
