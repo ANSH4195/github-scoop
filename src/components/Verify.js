@@ -35,7 +35,7 @@ const Verify = ({ location, history }) => {
       {loading ? (
         <>
           <Loader />
-          <h4 className='text-center'>
+          <h4 className='text-center mt-5'>
             <em>
               Loading may take upto 30 seconds. (Heroku takes some time to load)
             </em>
